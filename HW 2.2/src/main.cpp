@@ -6,7 +6,7 @@ constexpr uint32_t MEASUREMENT_TIME = 250;
 
 volatile uint32_t startTimeUs = 0;
 volatile uint32_t finishTimeUs = 0;
-volatile bool relay = false;
+bool relay = false;
 volatile bool read_relay = false;
 
 void IRAM_ATTR readPin() {
@@ -37,18 +37,19 @@ void loop() {
         startTimeUs = micros();
         read_relay = true;
         digitalWrite(RELAY_PIN, !digitalRead(RELAY_PIN));
-        delay(DEBOUNCE_MS); // Add a small delay to debounce the relay pin
+        delay(DEBOUNCE_MS); 
+        relay = !relay;
     }
 
     if (startTimeUs != 0 && finishTimeUs != 0 && count < 2 * MEASURMENTS){
-        if (count % 2 == 1) {
+        if (!relay) {
             elapsedTimeOffUs = finishTimeUs - startTimeUs;
             totalElapsedTimeOffUs += elapsedTimeOffUs;
             Serial.print("Elapsed time: ");
             Serial.print(elapsedTimeOffUs);
             Serial.println(" us");
         }
-        if (count % 2 == 0){
+        if (relay){
             elapsedTimeOnUs = finishTimeUs - startTimeUs;
             totalElapsedTimeOnUs += elapsedTimeOnUs;
             Serial.print("Elapsed time: ");
