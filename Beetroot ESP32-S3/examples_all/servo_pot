@@ -1,0 +1,17 @@
+#include <Arduino.h>
+#include <ESP32servo.h>
+
+constexpr uint8_t POT_PIN = 5;
+constexpr uint8_t SERVO_PIN = 4;
+
+Servo myServo;
+
+void setup() {
+  myServo.attach(SERVO_PIN);
+}
+
+void loop() {
+  int potValue = analogRead(POT_PIN);
+  int servoAngle = map(potValue, 0, 4095, 0, 180);
+  myServo.write(servoAngle);
+}

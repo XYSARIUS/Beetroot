@@ -1,0 +1,72 @@
+#include <Arduino.h>
+#include <Adafruit_NeoPixel.h>
+
+constexpr uint8_t RGB_LED_PIN = 48;
+constexpr uint8_t RGB_LED_COUNT = 1;
+constexpr uint8_t RGB_LED_BRIGHTNESS = 64;
+
+constexpr uint8_t LDR_PIN = 5;
+constexpr uint32_t TRESHOLD_DARK = 1250;
+constexpr uint32_t TRESHOLD_LIGHT = 2750;
+
+constexpr uint8_t RELAY_PIN = 4;
+constexpr uint8_t BUTTON_PIN = 6;
+
+constexpr uint32_t ADS_READ_MS = 100;
+constexpr uint32_t BUTTON_READ_MS = 250;
+constexpr uint32_t BAUD_RATE = 115200;
+
+uint32_t changedAt = 0;
+
+uint16_t ldrValue = 0;
+bool lightstate = true;
+uint8_t modestate = 1;
+
+Adafruit_NeoPixel rgbLed(RGB_LED_COUNT, RGB_LED_PIN, NEO_GRB + NEO_KHZ800);
+
+void setup(){
+  Serial.begin(BAUD_RATE);
+  delay(1000);
+  Serial.println("LDR Relay Controller");
+  pinMode(LDR_PIN, INPUT);
+  pinMode(RELAY_PIN, OUTPUT);
+  pinMode(BUTTON_PIN, INPUT_PULLUP);
+  rgbLed.begin();
+  rgbLed.setBrightness(RGB_LED_BRIGHTNESS);
+  Serial.println("Mode: Automatic");
+  rgbLed.setPixelColor(0, rgbLed.ColorHSV(65535/3*1));
+  rgbLed.show();
+  changedAt = millis();
+ }
+
+void loop(){
+  if (millis() % ADS_READ_MS == 0 && analogRead(LDR_PIN) != 0 && modestate == 1) {
+    ldrValue = analogRead(LDR_PIN);
+    if (ldrValue <= TRESHOLD_DARK && !lightstate) {
+      lightstate = !lightstate;
+      digitalWrite(RELAY_PIN, lightstate);
+      Serial.printf("LDR value: %d, turn ON\n", ldrValue);
+    }
+    if (ldrValue >= TRESHOLD_LIGHT && lightstate) {
+      lightstate = !lightstate;
+      digitalWrite(RELAY_PIN, lightstate);
+      Serial.printf("LDR value: %d, turn OFF\n", ldrValue);
+    }
+  }
+  if (millis() - changedAt >= BUTTON_READ_MS && !digitalRead(BUTTON_PIN)) { 
+    changedAt = millis();
+    modestate = (modestate + 1) % 3;
+    Serial.printf("Button pressed, mode state: %d\n", modestate);    
+    if (modestate == 0) {
+      Serial.println("Mode: Manual OFF");
+      digitalWrite(RELAY_PIN, LOW);
+      } else if (modestate == 1) {
+      Serial.println("Mode: Automatic");
+      } else if (modestate == 2) {
+      Serial.println("Mode: Manual ON");
+      digitalWrite(RELAY_PIN, HIGH);
+      }
+    rgbLed.setPixelColor(0, rgbLed.ColorHSV(65535/3*modestate));
+    rgbLed.show();
+  }
+}

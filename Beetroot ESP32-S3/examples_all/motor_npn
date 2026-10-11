@@ -1,0 +1,38 @@
+#include <Arduino.h>
+#include <cstdint>
+// Модуль 2.2 — Крок 3: рівні яскравості кнопкою (ISR + PWM)
+#define BASE_PIN 5
+#define BTN_PIN 6 // кнопка на 3.3V, INPUT_PULLDOWN
+#define PWM_FREQ 1000
+#define PWM_RES 8 // duty 0..255
+#define BOOST_DELAY_MS 50 // короткий імпульс для запуску мотора
+
+const uint8_t levels[9] = { 0, 32, 64, 96, 128, 160, 192, 224, 255 }; // OFF/LOW/MID/HIGH
+volatile bool pressed = false; // пише ISR, читає loop() → volatile
+void IRAM_ATTR onButton() { pressed = true; }
+
+void motorboost(uint8_t x) {
+  ledcWrite(BASE_PIN, 255);
+  delay(BOOST_DELAY_MS);
+  ledcWrite(BASE_PIN, x);
+}
+
+void setup() {
+    Serial.begin(115200);
+    ledcSetup(0, PWM_FREQ, PWM_RES); 
+    ledcAttachPin(BASE_PIN, 0);
+    pinMode(BTN_PIN, INPUT_PULLDOWN);
+    attachInterrupt(digitalPinToInterrupt(BTN_PIN), onButton, RISING);
+    ledcWrite(0, levels[0]);
+    Serial.println("Крок 3: OFF/LOW/MID/HIGH");
+}
+void loop() {
+  static uint8_t idx = 0;
+  if (pressed) {
+    pressed = false;
+    idx = (idx + 1) % 9; // наступний рівень по колу
+    ledcWrite(0, levels[idx]);
+    Serial.printf("Яскравість: %d%%\n", levels[idx] * 100 / 255);
+    delay(200); // антидребезг
+  }
+}

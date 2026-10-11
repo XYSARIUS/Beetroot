@@ -1,0 +1,28 @@
+#include "Arduino.h"
+
+#define LED_PIN 15
+#define PWM_FREQ 5000
+#define PWM_RESOLUTION 8
+const int CH = 0;
+
+void setup() {
+  Serial.begin(115200);
+  ledcSetup(CH, PWM_FREQ, PWM_RESOLUTION);
+  ledcAttachPin(LED_PIN, CH);
+}
+
+void loop() {
+  for (int dutyCycle = 0; dutyCycle <= 255; dutyCycle++) {
+    ledcWrite(CH, dutyCycle);
+    delay(7);
+  }
+
+  delay(500);
+
+  for (int dutyCycle = 255; dutyCycle >= 0; dutyCycle--) {
+    ledcWrite(CH, dutyCycle);
+    delay(7);
+  }
+
+  delay(1000);
+}

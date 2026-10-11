@@ -1,0 +1,93 @@
+#include <Arduino.h>
+
+constexpr uint8_t LED_RED = 15;
+constexpr uint8_t LED_GREEN = 16;
+constexpr uint8_t BUTTON_EXT = 21;
+constexpr uint8_t BUTTON_INT = 0;
+constexpr unsigned long DEBOUNCE_TIME = 50;
+
+enum class Mode {
+  BothBlink,
+  Alternate
+};
+
+Mode currentMode = Mode::BothBlink;
+bool extStableState = HIGH;
+bool extLastReading = HIGH;
+unsigned long extChangedAt = 0;
+bool intStableState = HIGH;
+bool intLastReading = HIGH;
+unsigned long intChangedAt = 0;
+unsigned long lastLedChange = 0;
+bool ledState = false;
+
+bool buttonPressed(uint8_t pin, bool &stableState, bool &lastReading,
+                   unsigned long &changedAt) {
+  bool reading = digitalRead(pin);
+
+  if (reading != lastReading) {
+    changedAt = millis();
+    lastReading = reading;
+  }
+
+  if (millis() - changedAt >= DEBOUNCE_TIME && reading != stableState) {
+    stableState = reading;
+    return stableState == LOW;
+  }
+
+  return false;
+}
+
+void setMode(Mode newMode) {
+  if (currentMode == newMode) {
+    return;
+  }
+
+  currentMode = newMode;
+  ledState = false;
+  lastLedChange = millis();
+  Serial.println(currentMode == Mode::BothBlink ? "Режим 1" : "Режим 2");
+}
+
+void updateLeds() {
+  unsigned long interval = currentMode == Mode::BothBlink ? 200 : 1000;
+
+  if (millis() - lastLedChange < interval) {
+    return;
+  }
+
+  lastLedChange = millis();
+  ledState = !ledState;
+
+  if (currentMode == Mode::BothBlink) {
+    digitalWrite(LED_RED, ledState);
+    digitalWrite(LED_GREEN, ledState);
+  } else {
+    digitalWrite(LED_RED, ledState);
+    digitalWrite(LED_GREEN, !ledState);
+  }
+}
+
+void setup() {
+  Serial.begin(115200);
+  pinMode(LED_RED, OUTPUT);
+  pinMode(LED_GREEN, OUTPUT);
+  pinMode(BUTTON_EXT, INPUT_PULLUP);
+  pinMode(BUTTON_INT, INPUT_PULLUP);
+  digitalWrite(LED_RED, LOW);
+  digitalWrite(LED_GREEN, LOW);
+  Serial.println("GPIO система ініціалізована");
+}
+
+void loop() {
+  if (buttonPressed(BUTTON_EXT, extStableState, extLastReading, extChangedAt)) {
+    setMode(Mode::BothBlink);
+  }
+
+  if (buttonPressed(BUTTON_INT, intStableState, intLastReading, intChangedAt)) {
+    setMode(Mode::Alternate);
+  }
+
+  updateLeds();
+}
+

@@ -1,0 +1,18 @@
+#include <Arduino.h>
+#define LED_OUT 15
+
+void setup() {
+  pinMode(LED_OUT, OUTPUT);
+}
+
+// Анoд синього світлoдіода та катoд червоного світлoдіода 
+// підключені до GPIO15 через резистoр 220 Ом.
+// катод синього світлoдіода підключений дo GND, 
+//а анoд червоного світлoдіода підключений дo VCC (3.3V).
+
+void loop() {
+  digitalWrite(LED_OUT, HIGH);
+  delay(200);
+  digitalWrite(LED_OUT, LOW);
+  delay(200);
+}

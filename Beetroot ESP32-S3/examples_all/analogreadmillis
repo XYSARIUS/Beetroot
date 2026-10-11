@@ -1,0 +1,31 @@
+#include <Arduino.h>
+
+constexpr uint8_t LDR_PIN = 5;
+constexpr uint32_t ADC_READ_MS = 100;
+int ldrValue = 0;
+float U_calc = 0.0;
+float U_read = 0.0;
+float err = 0.0;
+
+void setup(){
+  Serial.begin(115200);
+  pinMode(LDR_PIN, INPUT);
+  
+}
+
+void loop(){
+  if (millis() % ADC_READ_MS == 0) {
+    ldrValue = analogRead(LDR_PIN);
+    U_calc = ldrValue * 3100 / 4095;
+    U_read = analogReadMilliVolts(LDR_PIN);
+    err = abs(U_calc - U_read)/U_read * 100;
+    Serial.print("LDR value: ");
+    Serial.print(ldrValue);
+    Serial.print(" | U_calc: ");
+    Serial.print(U_calc);
+    Serial.print(" | U_mV: ");
+    Serial.print(U_read);
+    Serial.print(" | Error (%): ");
+    Serial.println(err);
+  }
+}
