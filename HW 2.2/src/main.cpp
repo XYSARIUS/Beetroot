@@ -16,6 +16,8 @@ void IRAM_ATTR readPin() {
     }
 }
 
+void 
+
 void setup() {
     Serial.begin(115200);
     delay(1000);
@@ -27,6 +29,8 @@ void setup() {
 void loop() {
     static uint32_t totalElapsedTimeOnUs = 0;
     static uint32_t totalElapsedTimeOffUs = 0;
+    static uint32_t elapsedTimeOnUs = 0;
+    static uint32_t elapsedTimeOffUs = 0;
     static uint32_t count = 0;
     static uint32_t lastMillis = millis();
     
@@ -39,7 +43,7 @@ void loop() {
     }
 
     if (startTimeUs != 0 && finishTimeUs != 0 && count < 2 * MEASURMENTS && count % 2 == 0) {
-        uint32_t elapsedTimeOnUs = finishTimeUs - startTimeUs;
+        elapsedTimeOnUs = finishTimeUs - startTimeUs;
         totalElapsedTimeOnUs += elapsedTimeOnUs;
         count++;
         Serial.print("Elapsed time: ");
@@ -49,7 +53,7 @@ void loop() {
         finishTimeUs = 0;
     }
     if (startTimeUs != 0 && finishTimeUs != 0 && count < 2 * MEASURMENTS && count % 2 == 1) {
-        uint32_t elapsedTimeOffUs = finishTimeUs - startTimeUs;
+        elapsedTimeOffUs = finishTimeUs - startTimeUs;
         totalElapsedTimeOffUs += elapsedTimeOffUs;
         count++;
         Serial.print("Elapsed time: ");
