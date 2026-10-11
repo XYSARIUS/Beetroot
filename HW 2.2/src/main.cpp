@@ -16,8 +16,6 @@ void IRAM_ATTR readPin() {
     }
 }
 
-void 
-
 void setup() {
     Serial.begin(115200);
     delay(1000);
@@ -42,30 +40,29 @@ void loop() {
         delay(DEBOUNCE_MS); // Add a small delay to debounce the relay pin
     }
 
-    if (startTimeUs != 0 && finishTimeUs != 0 && count < 2 * MEASURMENTS && count % 2 == 0) {
-        elapsedTimeOnUs = finishTimeUs - startTimeUs;
-        totalElapsedTimeOnUs += elapsedTimeOnUs;
+    if (startTimeUs != 0 && finishTimeUs != 0 && count < 2 * MEASURMENTS){
+        if (count % 2 == 1) {
+            elapsedTimeOffUs = finishTimeUs - startTimeUs;
+            totalElapsedTimeOffUs += elapsedTimeOffUs;
+            Serial.print("Elapsed time: ");
+            Serial.print(elapsedTimeOffUs);
+            Serial.println(" us");
+        }
+        if (count % 2 == 0){
+            elapsedTimeOnUs = finishTimeUs - startTimeUs;
+            totalElapsedTimeOnUs += elapsedTimeOnUs;
+            Serial.print("Elapsed time: ");
+            Serial.print(elapsedTimeOnUs);
+            Serial.println(" us");
+        }
         count++;
-        Serial.print("Elapsed time: ");
-        Serial.print(elapsedTimeOnUs);
-        Serial.println(" us");
         startTimeUs = 0;
         finishTimeUs = 0;
     }
-    if (startTimeUs != 0 && finishTimeUs != 0 && count < 2 * MEASURMENTS && count % 2 == 1) {
-        elapsedTimeOffUs = finishTimeUs - startTimeUs;
-        totalElapsedTimeOffUs += elapsedTimeOffUs;
-        count++;
-        Serial.print("Elapsed time: ");
-        Serial.print(elapsedTimeOffUs);
-        Serial.println(" us");
-        startTimeUs = 0;
-        finishTimeUs = 0;
-    }
+
     if (count >= 2 * MEASURMENTS) {
         uint32_t averageElapsedTimeOnUs = totalElapsedTimeOnUs / MEASURMENTS;
         uint32_t averageElapsedTimeOffUs = totalElapsedTimeOffUs / MEASURMENTS;
-
         Serial.print("Average elapsed time on: ");
         Serial.print(averageElapsedTimeOnUs);
         Serial.println(" us");
