@@ -1,6 +1,10 @@
 {
 	"folders": [
 		{
+			"name": "examples_all",
+			"path": "examples_all"
+		},
+		{
 			"name": "HW 2.2",
 			"path": "HW 2.2"
 		},
@@ -9,6 +13,7 @@
 			"path": "HW 2.3"
 		},
 		{
+			"name": "HW 2.4",
 			"path": "HW 2.4"
 		}
 	],
