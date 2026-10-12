@@ -7,7 +7,7 @@ struct LedConfig {
     uint32_t interval;
 };
 
-constexpr LedConfig LED1 {5, 200}, 
+constexpr LedConfig LED1 {5, 250}, 
                     LED2 {6, 500}, 
                     LED3 {7, 1000};
 
