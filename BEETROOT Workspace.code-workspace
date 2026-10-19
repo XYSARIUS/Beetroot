@@ -22,6 +22,9 @@
 		{
 			"name": "TEST_ESP_IDF",
 			"path": "TEST_ESP_IDF"
+		},
+		{
+			"path": "examples_esp_idf"
 		}
 	],
 	"settings": {}
