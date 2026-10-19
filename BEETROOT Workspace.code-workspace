@@ -20,11 +20,10 @@
 			"path": "TEST"
 		},
 		{
-			"name": "TEST_ESP_IDF",
-			"path": "TEST_ESP_IDF"
+			"path": "examples_esp_idf"
 		},
 		{
-			"path": "examples_esp_idf"
+			"path": "TEST_ESP_IDF"
 		}
 	],
 	"settings": {}
