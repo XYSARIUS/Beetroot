@@ -18,6 +18,10 @@
 		},
 		{
 			"path": "TEST"
+		},
+		{
+			"name": "TEST_ESP_IDF",
+			"path": "TEST_ESP_IDF"
 		}
 	],
 	"settings": {}
