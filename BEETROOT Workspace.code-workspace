@@ -5,6 +5,10 @@
 			"path": "examples_all"
 		},
 		{
+			"name": "TEST",
+			"path": "TEST"
+		},
+		{
 			"name": "HW 2.2",
 			"path": "HW 2.2"
 		},
@@ -13,17 +17,16 @@
 			"path": "HW 2.3"
 		},
 		{
-			"name": "HW 2.4",
-			"path": "HW 2.4"
+			"name": "HW 2.4.4",
+			"path": "HW 2.4.4"
 		},
 		{
-			"path": "TEST"
-		},
-		{
-			"path": "examples_esp_idf"
-		},
-		{
+			"name": "TEST_ESP_IDF",
 			"path": "TEST_ESP_IDF"
+		},
+		{
+			"name": "examples_esp_idf",
+			"path": "examples_esp_idf"
 		}
 	],
 	"settings": {}
